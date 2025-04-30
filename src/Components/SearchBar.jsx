@@ -5,6 +5,7 @@ const auth = import.meta.env.VITE_API_AUTH;
 //like whatever the user searched cache that data in local storage.
 //if the movie name is in history then the movie is already cached so no need to make another request.
 
+//add more features to card like rating release year,etc.
 const SearchBar = forwardRef((props, inputRef) => {
   const {
     movieData,
@@ -45,7 +46,7 @@ const SearchBar = forwardRef((props, inputRef) => {
       .then((data) => {
         console.log(data);
         setTotalPage(data.total_pages);
-        setMovieData(data.results);
+        setMovieData(data);
         let results = data;
         localStorage.setItem(searchText, JSON.stringify({ results }));
       })
@@ -69,7 +70,7 @@ const SearchBar = forwardRef((props, inputRef) => {
         if (storedUserData) {
           const userData = JSON.parse(storedUserData);
           console.log(userData);
-          setMovieData(userData.results.results);
+          setMovieData(userData.results);
           console.log(userData.results.total_pages);
           setTotalPage(userData.results.total_pages);
         } else {
@@ -83,6 +84,7 @@ const SearchBar = forwardRef((props, inputRef) => {
     setMovieData([]);
     setHistory([]);
     setMovieDetails(null);
+
     setTotalPage(null);
     setCurrentPage(1);
     localStorage.clear();

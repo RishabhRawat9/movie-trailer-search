@@ -52,6 +52,10 @@ function MovieDetails(props) {
   if (!movieDetails) {
     return <div>Loading...</div>;
   }
+  function handleClose() {
+    setMovieDetails(null);
+    setTrailer(null);
+  }
 
   return (
     <div className="bg-blue-900 p-10">
@@ -71,10 +75,18 @@ function MovieDetails(props) {
       ) : (
         <p>No trailer available</p>
       )}
-      <div className="flex flex-col align-middle justify-center">
+      <div className="flex flex-col align-middle justify-evenly">
         <p>{movieDetails.overview}</p>
         <p>Release Date: {movieDetails.release_date}</p>
         <p>Rating: {movieDetails.vote_average}/10</p>
+        <div className="flex justify-center w-full ">
+          <button
+            className="border-amber-50 bg-red-500 px-4 py rounded"
+            onClick={handleClose}
+          >
+            close
+          </button>
+        </div>
       </div>
     </div>
   );

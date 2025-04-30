@@ -44,7 +44,7 @@ function App() {
       })
       .then((data) => {
         setTotalPage(data.total_pages);
-        setMovieData(data.results);
+        setMovieData(data);
         let results = data;
         localStorage.setItem(searchText, JSON.stringify({ results }));
       })
@@ -102,14 +102,16 @@ function App() {
       <div className=" flex flex-col w-dvw">
         <div className="grid grid-cols-4 justify-evenly">
           {movieData && movieData.length !== 0 ? (
-            movieData.map((el, key) => {
+            movieData.results.map((el, key) => {
               return (
                 <MovieCard
                   key={key}
+                  idx={key}
                   title={el.title}
                   poster_path={el.poster_path}
                   overview={el.overview}
                   id={el.id}
+                  movieData={movieData}
                 />
               );
             })
@@ -119,7 +121,7 @@ function App() {
         </div>
 
         {totalPage != null ? (
-          <Stack spacing={2}>
+          <Stack spacing={2} alignSelf="center">
             <Pagination
               count={totalPage}
               variant="outlined"
