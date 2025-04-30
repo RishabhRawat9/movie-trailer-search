@@ -6,14 +6,20 @@ import SearchBar from "./Components/SearchBar";
 import { Routes, Route, Link } from "react-router-dom";
 import MovieDetails from "./Components/MovieDetails";
 
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+const auth = import.meta.env.VITE_API_AUTH;
+
 function App() {
   const inputRef = useRef(null);
   const [history, setHistory] = useState([]);
   const [movieData, setMovieData] = useState([]);
   const [movieDetails, setMovieDetails] = useState(null);
+  const [currentPage, setCurrentPage] = useState(null);
+  const [totalPage, setTotalPage] = useState(null);
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
-    // synchronize the histroy after the reload, effect runs even when the page reloads.
     const userHistory = localStorage.getItem("history");
     if (userHistory) {
       const userHistoryData = JSON.parse(userHistory);
@@ -22,6 +28,37 @@ function App() {
     }
   }, []);
 
+  function fetchMovies(searchText, curr) {
+    const url = `https://api.themoviedb.org/3/search/movie?query=${searchText}&include_adult=false&language=en-US&page=${curr}`;
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: auth,
+      },
+    };
+
+    fetch(url, options)
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        setTotalPage(data.total_pages);
+        setMovieData(data.results);
+        let results = data;
+        localStorage.setItem(searchText, JSON.stringify({ results }));
+      })
+      .catch((e) => {
+        console.error("Fetch error:", e);
+        setMovieData([]);
+      });
+  }
+
+  function handlePageChange(e) {
+    console.log(e.target.textContent);
+    setCurrentPage(e.target.textContent);
+    fetchMovies(searchText, e.target.textContent);
+  }
   return (
     <div>
       <nav className=" bg-black z-50 sticky top-0">
@@ -38,11 +75,18 @@ function App() {
                 history={history}
                 setHistory={setHistory}
                 ref={inputRef}
+                currentPage={currentPage}
+                setCurrentPage={setCurrentPage}
+                totalPage={totalPage}
+                setTotalPage={setTotalPage}
+                searchText={searchText}
+                setSearchText={setSearchText}
               />
             </div>
           </li>
         </ul>
       </nav>
+
       <Routes>
         <Route
           path="/movie/:id"
@@ -55,22 +99,35 @@ function App() {
         />
       </Routes>
 
-      <div className="grid grid-cols-4">
-        {movieData.length !== 0 ? (
-          movieData.map((el, key) => {
-            return (
-              <MovieCard
-                key={key}
-                title={el.title}
-                poster_path={el.poster_path}
-                overview={el.overview}
-                id={el.id}
-              />
-            );
-          })
-        ) : (
-          <p>no data</p>
-        )}
+      <div className=" flex flex-col w-dvw">
+        <div className="grid grid-cols-4 justify-evenly">
+          {movieData && movieData.length !== 0 ? (
+            movieData.map((el, key) => {
+              return (
+                <MovieCard
+                  key={key}
+                  title={el.title}
+                  poster_path={el.poster_path}
+                  overview={el.overview}
+                  id={el.id}
+                />
+              );
+            })
+          ) : (
+            <p>no data</p>
+          )}
+        </div>
+
+        {totalPage != null ? (
+          <Stack spacing={2}>
+            <Pagination
+              count={totalPage}
+              variant="outlined"
+              shape="rounded"
+              onChange={handlePageChange}
+            />
+          </Stack>
+        ) : null}
       </div>
     </div>
   );

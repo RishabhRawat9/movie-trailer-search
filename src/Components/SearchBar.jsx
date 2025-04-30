@@ -12,52 +12,66 @@ const SearchBar = forwardRef((props, inputRef) => {
     history,
     setHistory,
     movieDetails,
+    currentPage,
+    setCurrentPage,
     setMovieDetails,
+    totalPage,
+    setTotalPage,
+    searchText,
+    setSearchText,
   } = props;
   const [isFocused, setIsFocused] = useState(false);
-
   const dropdownRef = useRef(null);
 
+  function fetchMovies(searchText) {
+    let temp = [searchText, ...history];
+    setHistory(temp);
+    localStorage.setItem("history", JSON.stringify({ temp }));
+    setCurrentPage(1);
+
+    const url = `https://api.themoviedb.org/3/search/movie?query=${searchText}&include_adult=false&language=en-US&page=1`;
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization: auth,
+      },
+    };
+
+    fetch(url, options)
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setTotalPage(data.total_pages);
+        setMovieData(data.results);
+        let results = data;
+        localStorage.setItem(searchText, JSON.stringify({ results }));
+      })
+      .catch((e) => {
+        console.error("Fetch error:", e);
+        setMovieData([]);
+      });
+  }
   function handleSearch() {
-    const searchText = String(inputRef.current.value);
-    console.log("Searching for:", searchText);
+    const searchTerm = String(inputRef.current.value);
+    setSearchText(String(inputRef.current.value));
+    console.log("Searching for:", searchTerm);
 
     if (searchText.trim().length !== 0) {
-      if (!history.includes(searchText)) {
+      if (!history.includes(searchTerm)) {
         // if it doesn't include then i want to fetch the data o/w get from ls
-        let temp = [searchText, ...history];
-        setHistory(temp);
-        localStorage.setItem("history", JSON.stringify({ temp }));
-
-        const url = `https://api.themoviedb.org/3/search/movie?query=${searchText}&include_adult=false&language=en-US&page=1`;
-        const options = {
-          method: "GET",
-          headers: {
-            accept: "application/json",
-            Authorization: auth,
-          },
-        };
-
-        fetch(url, options)
-          .then((res) => {
-            return res.json();
-          })
-          .then((data) => {
-            console.log(data.results);
-            setMovieData(data.results);
-            let results = data.results;
-            localStorage.setItem(searchText, JSON.stringify({ results }));
-          })
-          .catch((e) => {
-            console.error("Fetch error:", e);
-            setMovieData([]);
-          });
+        fetchMovies(searchTerm);
       } else {
-        const storedUserData = localStorage.getItem(searchText);
+        const storedUserData = localStorage.getItem(searchTerm);
+
         if (storedUserData) {
           const userData = JSON.parse(storedUserData);
-          console.log(userData.results);
-          setMovieData(userData.results);
+          console.log(userData);
+          setMovieData(userData.results.results);
+          console.log(userData.results.total_pages);
+          setTotalPage(userData.results.total_pages);
         } else {
           console.log("User data not found in local storage");
         }
@@ -69,6 +83,8 @@ const SearchBar = forwardRef((props, inputRef) => {
     setMovieData([]);
     setHistory([]);
     setMovieDetails(null);
+    setTotalPage(null);
+    setCurrentPage(1);
     localStorage.clear();
     if (inputRef.current) {
       inputRef.current.value = "";
