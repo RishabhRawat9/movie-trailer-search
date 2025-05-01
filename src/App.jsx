@@ -61,12 +61,27 @@ function App() {
   }
   return (
     <div>
-      <nav className=" bg-black z-50 sticky top-0">
-        <ul>
-          <li>
-            <div className="flex flex-row items-center w-screen p-5 gap-1 ">
-              <div>hello world</div>
-              <p>this is the movie search trailer app</p>
+      <div>
+        <nav className=" bg-amber-300 z-50 sticky top-0">
+          <ul>
+            <li>
+              <div className="flex flex-row justify-evenly w-screen p-5 gap-1 ">
+                <div>hello world</div>
+                <p>this is the movie search trailer app</p>
+                <Link to={"/"}>
+                  <button className="bg-amber-400">search</button>
+                </Link>
+              </div>
+            </li>
+          </ul>
+        </nav>
+      </div>
+
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="w-full h-full">
               <SearchBar
                 movieDetails={movieDetails}
                 setMovieDetails={setMovieDetails}
@@ -83,11 +98,8 @@ function App() {
                 setSearchText={setSearchText}
               />
             </div>
-          </li>
-        </ul>
-      </nav>
-
-      <Routes>
+          }
+        />
         <Route
           path="/movie/:id"
           element={
@@ -97,40 +109,45 @@ function App() {
             />
           }
         />
+        <Route
+          path="/search"
+          element={
+            <div className=" flex flex-col w-dvw p-5">
+              <div className="grid grid-cols-4 justify-evenly">
+                {movieData && movieData.length !== 0 ? (
+                  movieData.results.map((el, key) => {
+                    return (
+                      <MovieCard
+                        key={key}
+                        idx={key}
+                        title={el.title}
+                        poster_path={el.poster_path}
+                        overview={el.overview}
+                        id={el.id}
+                        movieData={movieData}
+                      />
+                    );
+                  })
+                ) : (
+                  <p>no data</p>
+                )}
+              </div>
+
+              {totalPage != null ? (
+                <Stack spacing={2} alignSelf="center">
+                  <Pagination
+                    color="white"
+                    count={totalPage}
+                    variant="outlined"
+                    shape="rounded"
+                    onChange={handlePageChange}
+                  />
+                </Stack>
+              ) : null}
+            </div>
+          }
+        />
       </Routes>
-
-      <div className=" flex flex-col w-dvw">
-        <div className="grid grid-cols-4 justify-evenly">
-          {movieData && movieData.length !== 0 ? (
-            movieData.results.map((el, key) => {
-              return (
-                <MovieCard
-                  key={key}
-                  idx={key}
-                  title={el.title}
-                  poster_path={el.poster_path}
-                  overview={el.overview}
-                  id={el.id}
-                  movieData={movieData}
-                />
-              );
-            })
-          ) : (
-            <p>no data</p>
-          )}
-        </div>
-
-        {totalPage != null ? (
-          <Stack spacing={2} alignSelf="center">
-            <Pagination
-              count={totalPage}
-              variant="outlined"
-              shape="rounded"
-              onChange={handlePageChange}
-            />
-          </Stack>
-        ) : null}
-      </div>
     </div>
   );
 }

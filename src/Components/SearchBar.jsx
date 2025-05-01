@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { forwardRef } from "react";
 const auth = import.meta.env.VITE_API_AUTH;
+import { Link } from "react-router-dom";
 //store search history in local storage.
 //like whatever the user searched cache that data in local storage.
 //if the movie name is in history then the movie is already cached so no need to make another request.
@@ -119,10 +120,8 @@ const SearchBar = forwardRef((props, inputRef) => {
 
   return (
     <>
-      <div className="relative w-full max-w-md mx-auto">
-        {" "}
-        <div className="flex items-center space-x-2">
-          {" "}
+      <div className="relative w-full max-w-xl mx-auto pt-12 pb-8">
+        <div className="flex items-center space-x-3">
           <input
             type="search"
             ref={inputRef}
@@ -133,24 +132,26 @@ const SearchBar = forwardRef((props, inputRef) => {
                 handleSearch();
               }
             }}
-            className="flex-grow bg-gray-100 h-10 rounded-lg px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full flex-grow bg-gray-100 h-16 rounded-xl px-6 text-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg"
           />
-          <button
-            onClick={handleSearch}
-            className="bg-blue-500 text-white rounded-lg px-4 h-10 hover:bg-blue-600 transition duration-200"
-          >
-            Search
-          </button>
+          <Link to={"/search"}>
+            <button
+              onClick={handleSearch}
+              className="bg-blue-500 text-white rounded-lg px-5 h-14 hover:bg-blue-600 transition duration-200 font-medium shadow-md"
+            >
+              Search
+            </button>
+          </Link>
           <button
             onClick={clearSearch}
-            className="bg-gray-300 text-gray-700 rounded-lg px-4 h-10 hover:bg-gray-400 transition duration-200"
+            className="bg-gray-300 text-gray-700 rounded-lg px-5 h-14 hover:bg-gray-400 transition duration-200 font-medium shadow-md"
           >
             Clear
           </button>
         </div>
         <ul
           ref={dropdownRef}
-          className={`bg-white border border-gray-200 rounded-lg shadow-lg mt-1 p-2 absolute w-full z-20 ${
+          className={`bg-white border border-gray-200 rounded-lg shadow-lg  p-2 absolute w-full z-20 ${
             isFocused && history.length > 0 ? "block" : "hidden"
           }`}
           style={{ top: "100%" }}

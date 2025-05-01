@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 function MovieCard(props) {
@@ -9,7 +8,7 @@ function MovieCard(props) {
     <Link to={`/movie/${id}`}>
       <div
         className="group flex flex-col bg-white rounded-lg shadow-md overflow-hidden h-[400px] w-[300px] m-5 mx-auto 
-                  transition-all duration-300 hover:shadow-xl  hover:-translate-y-1 relative"
+                  transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative"
       >
         {/* img container */}
         <div className="relative h-10/12 w-full">
@@ -20,7 +19,9 @@ function MovieCard(props) {
           />
         </div>
         <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2">{title}</h3>
+          <h3 className="text-lg font-semibold mb-2 truncate" title={title}>
+            {title}
+          </h3>
         </div>
         <div
           className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white
@@ -28,8 +29,8 @@ function MovieCard(props) {
                      transition-transform duration-300 ease-in-out p-5"
         >
           <div className="flex justify-between items-center mb-2">
-            <span className="font-semibold">Movie Details</span>
-            <span className="bg-yellow-500 text-black px-2 py-1 rounded-md font-bold">
+            <span className="font-semibold truncate mr-2">Movie Details</span>
+            <span className="bg-yellow-500 text-black px-2 py-1 rounded-md font-bold shrink-0">
               {rating}★{" "}
             </span>
           </div>
@@ -37,11 +38,11 @@ function MovieCard(props) {
           <div className="space-y-2">
             <p className="flex justify-between">
               <span className="text-gray-300">Release Date: </span>
-              <span className="font-medium">{releaseYear}</span>
+              <span className="font-medium truncate ml-2">{releaseYear}</span>
             </p>
             <p className="flex justify-between">
               <span className="text-gray-300">Language:</span>
-              <span className="font-medium">English</span>
+              <span className="font-medium truncate ml-2">English</span>
             </p>
           </div>
 
