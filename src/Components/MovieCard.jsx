@@ -1,53 +1,63 @@
 import { Link } from "react-router-dom";
 
 function MovieCard(props) {
+  // ...existing logic...
   const { idx, title, poster_path, overview, id, movieData } = props;
-  const releaseYear = movieData.results[idx].release_date;
+
   const rating = movieData.results[idx].vote_average;
+  const releaseYear = movieData.results[idx].release_date;
+
   return (
-    <Link to={`/movie/${id}`}>
+    <Link to={`/movie/${id}`} className="w-full">
       <div
-        className="group flex flex-col bg-white rounded-lg shadow-md overflow-hidden h-[400px] w-[300px] m-5 mx-auto 
+        className="group flex flex-col bg-white rounded-lg shadow-md overflow-hidden m-2 sm:m-3 w-full 
                   transition-all duration-300 hover:shadow-xl hover:-translate-y-1 relative"
       >
-        {/* img container */}
-        <div className="relative h-10/12 w-full">
+        <div className="relative w-full overflow-hidden h-64 sm:h-72 md:h-80 lg:h-96">
           <img
-            src={`https://image.tmdb.org/t/p/original/${poster_path}`}
+            src={
+              poster_path
+                ? `https://image.tmdb.org/t/p/w500/${poster_path}`
+                : "https://via.placeholder.com/500x750.png?text=No+Image"
+            }
             alt={title}
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="p-4">
-          <h3 className="text-lg font-semibold mb-2 truncate" title={title}>
+
+        <div className="p-3 sm:p-4">
+          <h3
+            className="text-base sm:text-lg font-semibold mb-1 sm:mb-2 truncate"
+            title={title}
+          >
             {title}
           </h3>
         </div>
         <div
-          className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white
-                     transform translate-y-full group-hover:translate-y-1/12
-                     transition-transform duration-300 ease-in-out p-5"
+          className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-70 text-white
+                     transform translate-y-full group-hover:translate-y-0 
+                     transition-transform duration-300 ease-in-out p-3 sm:p-4 text-xs sm:text-sm"
         >
-          <div className="flex justify-between items-center mb-2">
-            <span className="font-semibold truncate mr-2">Movie Details</span>
+          <div className="flex justify-between items-center mb-1 sm:mb-2">
+            <span className="font-semibold truncate mr-2 text-sm sm:text-base">
+              Movie Details
+            </span>
             <span className="bg-yellow-500 text-black px-2 py-1 rounded-md font-bold shrink-0">
-              {rating}★{" "}
+              {rating ? rating.toFixed(1) : "N/A"}★{" "}
             </span>
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-1 sm:space-y-2">
             <p className="flex justify-between">
-              <span className="text-gray-300">Release Date: </span>
-              <span className="font-medium truncate ml-2">{releaseYear}</span>
-            </p>
-            <p className="flex justify-between">
-              <span className="text-gray-300">Language:</span>
-              <span className="font-medium truncate ml-2">English</span>
+              <span className="text-gray-300">Release: </span>
+              <span className="font-medium truncate ml-2">
+                {releaseYear ? new Date(releaseYear).getFullYear() : "N/A"}
+              </span>
             </p>
           </div>
 
-          <div className="mt-3 text-center">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-full text-sm font-medium w-full">
+          <div className="mt-2 sm:mt-3 text-center">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 sm:px-4 rounded-full text-xs sm:text-sm font-medium w-full">
               View Details
             </button>
           </div>

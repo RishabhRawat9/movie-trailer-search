@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { forwardRef } from "react";
 const auth = import.meta.env.VITE_API_AUTH;
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 //store search history in local storage.
 //like whatever the user searched cache that data in local storage.
 //if the movie name is in history then the movie is already cached so no need to make another request.
@@ -24,6 +24,7 @@ const SearchBar = forwardRef((props, inputRef) => {
   } = props;
   const [isFocused, setIsFocused] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   function fetchMovies(searchText) {
     let temp = [searchText, ...history];
@@ -47,6 +48,7 @@ const SearchBar = forwardRef((props, inputRef) => {
       .then((data) => {
         console.log(data);
         setTotalPage(data.total_pages);
+
         setMovieData(data);
         let results = data;
         localStorage.setItem(searchText, JSON.stringify({ results }));
@@ -57,20 +59,23 @@ const SearchBar = forwardRef((props, inputRef) => {
       });
   }
   function handleSearch() {
+    navigate("/search");
     const searchTerm = String(inputRef.current.value);
     setSearchText(String(inputRef.current.value));
     console.log("Searching for:", searchTerm);
 
-    if (searchText.trim().length !== 0) {
+    if (searchTerm.trim().length !== 0) {
       if (!history.includes(searchTerm)) {
+        console.log("ran");
         // if it doesn't include then i want to fetch the data o/w get from ls
         fetchMovies(searchTerm);
       } else {
+        console.log("else ran");
         const storedUserData = localStorage.getItem(searchTerm);
 
         if (storedUserData) {
           const userData = JSON.parse(storedUserData);
-          console.log(userData);
+          console.log(userData.results);
           setMovieData(userData.results);
           console.log(userData.results.total_pages);
           setTotalPage(userData.results.total_pages);

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const auth = import.meta.env.VITE_API_AUTH;
 
 function MovieDetails(props) {
   const { id } = useParams(); //gets the variable in the url
   //here it's the movie id
-
+  const navigate = useNavigate();
   const [trailer, setTrailer] = useState(null);
   const { movieDetails, setMovieDetails } = props;
   useEffect(() => {
@@ -53,6 +53,7 @@ function MovieDetails(props) {
     return <div>Loading...</div>;
   }
   function handleClose() {
+    navigate("/search");
     setMovieDetails(null);
     setTrailer(null);
   }
