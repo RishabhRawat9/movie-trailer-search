@@ -26,11 +26,11 @@ const SearchIcon = () => (
       d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
     />
   </svg>
-);
+); //for mobile view.
 function App() {
   const inputRef = useRef(null);
   const [history, setHistory] = useState([]);
-  const [movieData, setMovieData] = useState();
+  const [movieData, setMovieData] = useState([]);
   const [movieDetails, setMovieDetails] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(0);
@@ -71,7 +71,7 @@ function App() {
       })
       .catch((e) => {
         console.error("Fetch error:", e);
-        setMovieData();
+        setMovieData([]);
         setTotalPage(0);
       });
   }

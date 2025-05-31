@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import movieStore from "../store/MovieStore";
 
 function MovieCard(props) {
   // ...existing logic...
-  const { idx, title, poster_path, overview, id, movieData, popularData } =
-    props;
+  const { idx, title, poster_path, overview, id, movieData } = props;
+  const popularData = movieStore((state) => state.popularData);
   let rating, releaseYear;
 
   if (movieData !== undefined) {
