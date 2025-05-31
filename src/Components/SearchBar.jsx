@@ -32,23 +32,14 @@ const SearchBar = forwardRef((props, inputRef) => {
     localStorage.setItem("history", JSON.stringify({ temp }));
     setCurrentPage(1);
 
-    const url = `https://api.themoviedb.org/3/search/movie?query=${searchText}&include_adult=false&language=en-US&page=1`;
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: auth,
-      },
-    };
-
-    fetch(url, options)
+    const url = `http://localhost:8080/api/search/${searchText}/${currentPage}`;
+    fetch(url)
       .then((res) => {
         return res.json();
       })
       .then((data) => {
         console.log(data);
         setTotalPage(data.total_pages);
-
         setMovieData(data);
         let results = data;
         localStorage.setItem(searchText, JSON.stringify({ results }));

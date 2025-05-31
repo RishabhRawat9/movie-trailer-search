@@ -2,10 +2,19 @@ import { Link } from "react-router-dom";
 
 function MovieCard(props) {
   // ...existing logic...
-  const { idx, title, poster_path, overview, id, movieData } = props;
+  const { idx, title, poster_path, overview, id, movieData, popularData } =
+    props;
+  let rating, releaseYear;
 
-  const rating = movieData.results[idx].vote_average;
-  const releaseYear = movieData.results[idx].release_date;
+  if (movieData !== undefined) {
+    rating = movieData.results[idx].vote_average;
+    releaseYear = movieData.results[idx].release_date;
+  }
+
+  if (popularData !== undefined) {
+    rating = popularData[idx].vote_average;
+    releaseYear = popularData[idx].release_date;
+  }
 
   return (
     <Link to={`/movie/${id}`} className="w-full">

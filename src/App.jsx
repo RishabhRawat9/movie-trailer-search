@@ -1,4 +1,3 @@
-// ...existing imports...
 import React, { useState, useEffect, useRef } from "react";
 import "./App.css";
 import MovieCard from "./Components/MovieCard";
@@ -8,7 +7,10 @@ import MovieDetails from "./Components/MovieDetails";
 
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-const auth = import.meta.env.VITE_API_AUTH;
+import Popular from "./Components/Popular";
+
+//for home page implement infinite scroll, and for search pages implement pagination.
+
 const SearchIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -34,7 +36,10 @@ function App() {
   const [totalPage, setTotalPage] = useState(0);
   const [searchText, setSearchText] = useState("");
 
+  //error - > from home page ("/") go to search search for soemthing then go to home again the popular movies don't come.fix it
+  //nothing happens the request isn't going.
   useEffect(() => {
+    //lloads up the history
     const userHistory = localStorage.getItem("history");
     if (userHistory) {
       try {
@@ -49,24 +54,10 @@ function App() {
     }
   }, []);
 
-  function fetchMovies(searchQuery, page) {
-    if (!searchQuery.trim()) {
-      setMovieData({ results: [] });
-      setTotalPage(0);
-      return;
-    }
-    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(
-      searchQuery
-    )}&include_adult=false&language=en-US&page=${page}`;
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: auth,
-      },
-    };
-
-    fetch(url, options)
+  function fetchMovies(page, search) {
+    //for handling page changes//also need to send the search query
+    const url = `http://localhost:8080/api/search/${search}/${page}`;
+    fetch(url)
       .then((res) => {
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
@@ -76,6 +67,7 @@ function App() {
       .then((data) => {
         setTotalPage(data.total_pages || 0);
         setMovieData(data || null);
+        console.log(data);
       })
       .catch((e) => {
         console.error("Fetch error:", e);
@@ -84,9 +76,9 @@ function App() {
       });
   }
 
-  function handlePageChange(event, value) {
-    setCurrentPage(value);
-    fetchMovies(searchText, value);
+  function handlePageChange(event, page) {
+    setCurrentPage(page);
+    fetchMovies(page, searchText);
   }
 
   return (
@@ -96,13 +88,15 @@ function App() {
           <ul>
             <li>
               <div className="flex flex-row sm:flex-row items-center justify-between sm:justify-around w-full p-3 sm:p-4 gap-2">
-                <div className="text-lg font-semibold text-center sm:text-left">
-                  Movie Trailer Search
-                </div>
+                <Link to={"/"}>
+                  <div className="text-lg font-semibold text-center sm:text-left">
+                    Movie Trailer Search
+                  </div>
+                </Link>
                 <p className="text-xs sm:text-sm text-center sm:text-left px-2">
                   Find your favorite movie trailers!
                 </p>
-                <Link to={"/"} className="w-auto">
+                <Link to={"/home"} className="w-auto">
                   <button className="bg-amber-500 hover:bg-amber-600 text-white font-medium py-2 px-3 sm:px-4 rounded-lg transition-colors text-sm flex items-center justify-center">
                     <span className="sm:hidden">
                       <SearchIcon />
@@ -118,8 +112,9 @@ function App() {
       </div>
 
       <Routes>
+        <Route path="/" element={<Popular />} />
         <Route
-          path="/"
+          path="/home"
           element={
             <div className="w-full min-h-[calc(100vh-80px)] flex items-center justify-center p-4">
               <SearchBar
@@ -177,7 +172,7 @@ function App() {
                   })
                 ) : (
                   <p className="col-span-1 xs:col-span-2 sm:col-span-2 md:col-span-3 lg:col-span-4 xl:col-span-5 text-center text-gray-500 py-10 text-lg">
-                    No movies found. Try searching for something else!
+                    LOADING!
                   </p>
                 )}
               </div>

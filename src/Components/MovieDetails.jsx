@@ -53,7 +53,7 @@ function MovieDetails(props) {
     return <div>Loading...</div>;
   }
   function handleClose() {
-    navigate("/search");
+    navigate("/");
     setMovieDetails(null);
     setTrailer(null);
   }
