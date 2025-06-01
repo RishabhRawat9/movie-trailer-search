@@ -2,37 +2,35 @@ import React, { useState, useEffect, useRef } from "react";
 import { forwardRef } from "react";
 const auth = import.meta.env.VITE_API_AUTH;
 import { Link, useNavigate } from "react-router-dom";
+import movieStore from "../store/MovieStore";
 //store search history in local storage.
 //like whatever the user searched cache that data in local storage.
 //if the movie name is in history then the movie is already cached so no need to make another request.
 
 //add more features to card like rating release year,etc.
 const SearchBar = forwardRef((props, inputRef) => {
-  const {
-    movieData,
-    setMovieData,
-    history,
-    setHistory,
-    movieDetails,
-    currentPage,
-    setCurrentPage,
-    setMovieDetails,
-    totalPage,
-    setTotalPage,
-    searchText,
-    setSearchText,
-  } = props;
+  const { history, setHistory } = props;
+
+  const setSearchText = movieStore((state) => state.setSearchText);
+  const setTotalPage = movieStore((state) => state.setTotalPage);
+  const setMovieData = movieStore((state) => state.setMovieData);
+  const setCurrentPage = movieStore((state) => state.setCurrentPage);
+  const setMovieDetails = movieStore((state) => state.setMovieDetails);
+  const currentPage = movieStore((state) => state.currentPage);
+
   const [isFocused, setIsFocused] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { setPopularLoading } = movieStore();
 
-  function fetchMovies(searchText) {
-    let temp = [searchText, ...history];
+  function fetchMovies(searchTerm) {
+    let temp = [searchTerm, ...history];
     setHistory(temp);
     localStorage.setItem("history", JSON.stringify({ temp }));
     setCurrentPage(1);
+    setPopularLoading(false); // when the search data is loading then no popular data is to be loaded.
 
-    const url = `http://localhost:8080/api/search/${searchText}/${currentPage}`;
+    const url = `http://localhost:8080/api/search/${searchTerm}/${currentPage}`;
     fetch(url)
       .then((res) => {
         return res.json();
@@ -42,7 +40,7 @@ const SearchBar = forwardRef((props, inputRef) => {
         setTotalPage(data.total_pages);
         setMovieData(data);
         let results = data;
-        localStorage.setItem(searchText, JSON.stringify({ results }));
+        localStorage.setItem(searchTerm, JSON.stringify({ results }));
       })
       .catch((e) => {
         console.error("Fetch error:", e);
@@ -51,8 +49,9 @@ const SearchBar = forwardRef((props, inputRef) => {
   }
   function handleSearch() {
     navigate("/search");
-    const searchTerm = String(inputRef.current.value);
-    setSearchText(String(inputRef.current.value));
+    setPopularLoading(false);
+    const searchTerm = String(inputRef.current.value).trim();
+    setSearchText(searchTerm);
     console.log("Searching for:", searchTerm);
 
     if (searchTerm.trim().length !== 0) {

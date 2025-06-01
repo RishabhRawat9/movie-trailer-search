@@ -8,6 +8,7 @@ import MovieDetails from "./Components/MovieDetails";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import Popular from "./Components/Popular";
+import movieStore from "./store/MovieStore";
 
 //for home page implement infinite scroll, and for search pages implement pagination.
 
@@ -29,12 +30,16 @@ const SearchIcon = () => (
 ); //for mobile view.
 function App() {
   const inputRef = useRef(null);
-  const [history, setHistory] = useState([]);
-  const [movieData, setMovieData] = useState([]);
-  const [movieDetails, setMovieDetails] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(0);
-  const [searchText, setSearchText] = useState("");
+  const [history, setHistory] = useState([]); //keep same.
+
+  const totalPage = movieStore((state) => state.totalPage);
+
+  const movieData = movieStore((state) => state.movieData);
+
+  const currentPage = movieStore((state) => state.currentPage);
+  const setCurrentPage = movieStore((state) => state.setCurrentPage);
+
+  const fetchMoviesPage = movieStore((state) => state.fetchMoviesPage);
 
   //error - > from home page ("/") go to search search for soemthing then go to home again the popular movies don't come.fix it
   //nothing happens the request isn't going.
@@ -54,31 +59,9 @@ function App() {
     }
   }, []);
 
-  function fetchMovies(page, search) {
-    //for handling page changes//also need to send the search query
-    const url = `http://localhost:8080/api/search/${search}/${page}`;
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setTotalPage(data.total_pages || 0);
-        setMovieData(data || null);
-        console.log(data);
-      })
-      .catch((e) => {
-        console.error("Fetch error:", e);
-        setMovieData([]);
-        setTotalPage(0);
-      });
-  }
-
   function handlePageChange(event, page) {
     setCurrentPage(page);
-    fetchMovies(page, searchText);
+    fetchMoviesPage(page);
   }
 
   return (
@@ -118,20 +101,9 @@ function App() {
           element={
             <div className="w-full min-h-[calc(100vh-80px)] flex items-center justify-center p-4">
               <SearchBar
-                movieDetails={movieDetails}
-                setMovieDetails={setMovieDetails}
-                movieData={movieData}
-                setMovieData={setMovieData}
                 history={history}
                 setHistory={setHistory}
                 ref={inputRef}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
-                totalPage={totalPage}
-                setTotalPage={setTotalPage}
-                searchText={searchText}
-                setSearchText={setSearchText}
-                fetchMovies={fetchMovies}
               />
             </div>
           }
@@ -140,10 +112,7 @@ function App() {
           path="/movie/:id"
           element={
             <div className="p-4 md:p-6">
-              <MovieDetails
-                movieDetails={movieDetails}
-                setMovieDetails={setMovieDetails}
-              />
+              <MovieDetails />
             </div>
           }
         />
@@ -166,7 +135,6 @@ function App() {
                         id={el.id}
                         release_date={el.release_date}
                         vote_average={el.vote_average}
-                        movieData={movieData}
                       />
                     );
                   })
@@ -193,6 +161,7 @@ function App() {
                     size="small"
                     className="sm:hidden"
                   />
+                  {/* media queries. */}
                   <Pagination
                     color="primary"
                     count={totalPage}

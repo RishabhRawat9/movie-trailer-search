@@ -3,8 +3,12 @@ import movieStore from "../store/MovieStore";
 
 function MovieCard(props) {
   // ...existing logic...
-  const { idx, title, poster_path, overview, id, movieData } = props;
+  const movieData = movieStore((state) => {
+    state.movieData;
+  });
+  const { idx, title, poster_path, overview, id } = props;
   const popularData = movieStore((state) => state.popularData);
+  const popularLoading = movieStore((state) => state.popularLoading);
   let rating, releaseYear;
 
   if (movieData !== undefined) {
@@ -12,7 +16,7 @@ function MovieCard(props) {
     releaseYear = movieData.results[idx].release_date;
   }
 
-  if (popularData !== undefined) {
+  if (popularLoading === true && popularData !== undefined) {
     rating = popularData[idx].vote_average;
     releaseYear = popularData[idx].release_date;
   }

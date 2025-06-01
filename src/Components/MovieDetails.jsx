@@ -7,7 +7,8 @@ function MovieDetails(props) {
   //here it's the movie id
   const navigate = useNavigate();
   const [trailer, setTrailer] = useState(null);
-  const { movieDetails, setMovieDetails } = props;
+  const movieDetails = movieStore((state) => state.movieDetails);
+  const setMovieDetails = movieStore((state) => state.setMovieDetails);
   useEffect(() => {
     const fetchMovieDetails = async () => {
       try {

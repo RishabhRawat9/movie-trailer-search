@@ -13,7 +13,28 @@ const movieStore = create((set, get) => ({
   popularLoading: false,
 
   setMovieData: (data) => set(() => ({ movieData: data })),
+  setCurrentPage: (data) => set(() => ({ currentPage: data })),
+  setMovieDetails: (data) => set(() => ({ movieDetails: data })),
+  setSearchText: (data) => set(() => ({ searchText: data })),
+  setTotalPage: (data) => set(() => ({ totalPage: data })),
+  //actions for setting movieData;
+  fetchMoviesPage: async (page) => {
+    //for when the user changes the pages.
+    const state = get();
+    try {
+      const url = `http://localhost:8080/api/search/${state.searchText}/${page}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      state.setTotalPage(data.total_pages || 0);
+      state.setMovieData(data || []);
+    } catch (e) {
+      console.log(e);
+      state.setMovieData([]);
+      state.setTotalPage(0);
+    }
+  },
 
+  //popular.jsx states and actions.
   setPopularData: (data) => set({ popularData: data }),
 
   appendPopularData: (newData) =>
@@ -24,17 +45,19 @@ const movieStore = create((set, get) => ({
     }),
 
   setPopularPage: (page) => set({ currPage: page }),
+
   setPopularLoading: (loading) => set({ popularLoading: loading }),
 
   resetPopular: () =>
     set({
       popularData: [],
       currPage: 1,
-      popularLoading: false,
+      popularLoading: true,
     }),
 
   fetchPopularMovies: async () => {
     const state = get();
+    state.setPopularLoading(true); //when the popular data is loading set it to true o/w keep it false;
 
     try {
       const url = `http://localhost:8080/api/popular/${state.currPage}`;

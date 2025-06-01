@@ -25,9 +25,6 @@ function Popular() {
                 poster_path={el.poster_path}
                 overview={el.overview}
                 id={el.id}
-                release_date={el.release_date}
-                vote_average={el.vote_average}
-                popularData={popularData}
               />
             );
           })
@@ -39,10 +36,9 @@ function Popular() {
       </div>
       <button
         onClick={fetchPopularMovies}
-        disabled={popularLoading}
         className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-medium transition-colors"
       >
-        {popularLoading ? "Loading..." : "Load More"}
+        Load
       </button>
     </div>
   );
