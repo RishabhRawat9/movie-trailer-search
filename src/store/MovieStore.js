@@ -2,6 +2,9 @@
 import { create } from "zustand";
 
 const movieStore = create((set, get) => ({
+  loggedIn: false,
+  setLoggedIn: (data) => set(() => ({ loggedIn: data })),
+
   movieData: [],
   movieDetails: null,
   currentPage: 1,
@@ -39,8 +42,15 @@ const movieStore = create((set, get) => ({
 
   appendPopularData: (newData) =>
     set((state) => {
+      const existingIds = new Set(state.popularData.map((movie) => movie.id));
+
+      // Filter out movies that already exist
+      const uniqueNewMovies = newData.filter(
+        (movie) => !existingIds.has(movie.id)
+      );
+
       return {
-        popularData: [...state.popularData, ...newData],
+        popularData: [...state.popularData, ...uniqueNewMovies],
       };
     }),
 
@@ -57,6 +67,7 @@ const movieStore = create((set, get) => ({
 
   fetchPopularMovies: async () => {
     const state = get();
+
     state.setPopularLoading(true); //when the popular data is loading set it to true o/w keep it false;
 
     try {
