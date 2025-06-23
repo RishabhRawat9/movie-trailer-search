@@ -1,4 +1,3 @@
-// src/Components/Signup.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -31,14 +30,13 @@ const Login = () => {
         password: form.password,
       });
 
-      // Handle success
-      console.log("Registration successful:", response.data);
+      console.log("Registration successful:", response.data.id);
       alert(`Successfully logged in `);
       setLoggedIn(true);
       navigate("/");
       localStorage.setItem("isLoggedIn", true);
+      localStorage.setItem("userId", response.data.id);
     } catch (error) {
-      // Handle error
       console.error("Registration failed:", error);
       localStorage.setItem("isLoggedIn", false);
       if (error.response && error.response.data) {
@@ -54,7 +52,6 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Header */}
         <div className="text-center mb-8">
           <div className="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
             <svg
@@ -79,7 +76,6 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Form Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
           {error && (
             <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-400 rounded-r-lg">
@@ -101,7 +97,6 @@ const Login = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
             <div>
               <label
                 htmlFor="email"
@@ -136,7 +131,6 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Password Field */}
             <div>
               <label
                 htmlFor="password"
@@ -171,7 +165,6 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
@@ -210,6 +203,19 @@ const Login = () => {
               )}
             </button>
           </form>
+        </div>
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{" "}
+            <button
+              onClick={() => {
+                navigate("/signup");
+              }}
+              className="text-amber-600 hover:text-amber-700 font-semibold hover:underline transition-colors"
+            >
+              Sign In
+            </button>
+          </p>
         </div>
       </div>
     </div>

@@ -12,6 +12,9 @@ import movieStore from "./store/MovieStore";
 import Signup from "./Components/Signup";
 import Navbar from "./Components/Navbar";
 import Login from "./Components/Login";
+import Lists from "./Components/Lists";
+
+// import ShowList from "./Components/ShowList";
 
 //for home page implement infinite scroll, and for search pages implement pagination.
 
@@ -77,12 +80,15 @@ function App() {
 
   return (
     <div>
-      {loggedIn ? <Navbar /> : null}
-
-      <main className="flex-1">
+      <main className="flex-1 pt-16">
+        <Navbar />
         <Routes>
-          <Route path="/" element={loggedIn ? <Popular /> : <Signup />} />
+          <Route path="/" element={<Popular />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/lists" element={<Lists />} />
+          {/* <Route path="/lists/:id" element={<ShowList />} /> */}
+
           <Route
             path="/home"
             element={
