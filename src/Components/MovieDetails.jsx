@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 const auth = import.meta.env.VITE_API_AUTH;
+import movieStore from "../store/MovieStore";
 
 function MovieDetails(props) {
   const { id } = useParams(); //gets the variable in the url

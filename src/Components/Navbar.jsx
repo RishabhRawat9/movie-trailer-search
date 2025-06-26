@@ -28,8 +28,9 @@ function Navbar() {
 
   const handleLogout = () => {
     if (loggedIn === true) {
-      localStorage.removeItem("isLoggedIn");
-      setLoggedIn(true);
+      localStorage.clear();
+      setLoggedIn(false);
+      navigate("/login");
     } else {
       navigate("/login");
     }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
 import MovieCard from "./MovieCard";
@@ -18,6 +18,16 @@ function Lists() {
     watch,
     formState: { errors },
   } = useForm();
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/api/list/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        setLists(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   function onSubmit(data) {
     const obj = { ...data, id: id };
