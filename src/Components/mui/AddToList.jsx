@@ -1,36 +1,24 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
+
 import DialogTitle from "@mui/material/DialogTitle";
 import Dialog from "@mui/material/Dialog";
-import PersonIcon from "@mui/icons-material/Person";
-import AddIcon from "@mui/icons-material/Add";
-import Typography from "@mui/material/Typography";
-import { blue } from "@mui/material/colors";
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 const emails = ["username@gmail.com", "user02@gmail.com"];
+import movieStore from "../../store/MovieStore";
+import { useNavigate } from "react-router-dom";
 
 function SimpleDialog(props) {
   const userId = localStorage.getItem("userId");
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-  const { listData, movieId } = props;
+  const { register, handleSubmit, watch } = useForm();
+  const navigate = useNavigate();
 
-  const { onClose, selectedValue, open } = props;
+  const { listData, movieId, onClose, isLoggedIn, open } = props;
 
   const onSubmit = async (userlistData) => {
     try {
@@ -49,7 +37,7 @@ function SimpleDialog(props) {
   };
 
   const handleClose = () => {
-    onClose(selectedValue);
+    onClose(null); // not returning anything to parent.
   };
 
   return (
@@ -81,44 +69,52 @@ function SimpleDialog(props) {
 SimpleDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired,
 };
 
-export default function BasicModal(props) {
+export default function AddToList(props) {
+  const isLoggedIn = movieStore((state) => {
+    state.loggedIn;
+  });
   const { movieId } = props;
   const [listData, setListData] = useState([]);
-  const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
+  const [open, setOpen] = useState(false);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = async () => {
+    if (!isLoggedIn) {
+      alert("signup first");
+      return;
+    }
     setOpen(true);
     const userId = localStorage.getItem("userId");
-    axios
-      .get(`http://localhost:8080/api/list/${userId}`)
-      .then((res) => {
-        console.log(res.data);
-        setListData(res.data);
-      })
-      .catch((err) => console.log(err));
+    try {
+      const res = await axios.get(`http://localhost:8080/api/list/${userId}`);
+      console.log(res.data);
+      setListData(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleClose = (value) => {
     setOpen(false);
-    setSelectedValue(value);
   };
 
   return (
-    <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Open simple dialog
+    <div className="bg-black">
+      <Button
+        sx={{ bgcolor: "white", color: "black" }}
+        variant="outlined"
+        onClick={handleClickOpen}
+      >
+        Add to List
       </Button>
 
       <SimpleDialog
         listData={listData}
-        selectedValue={selectedValue}
         open={open}
         onClose={handleClose}
         movieId={movieId}
+        isLoggedIn={isLoggedIn}
       />
     </div>
   );

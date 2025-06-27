@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import movieStore from "../store/MovieStore";
-import BasicSelect from "./mui/BasicModal";
-import BasicModal from "./mui/BasicModal";
+import BasicSelect from "./mui/AddToList";
+import BasicModal from "./mui/AddToList";
+import AddToList from "./mui/AddToList";
 function MovieCard(props) {
-  const [showModal, setShowModal] = useState(false);
-
   const movieData = movieStore((state) => {
     state.movieData;
   });
-  const { idx, title, poster_path, overview, id } = props;
+  const { idx, title, poster_path, id } = props;
   const popularData = movieStore((state) => state.popularData);
   const popularLoading = movieStore((state) => state.popularLoading);
   let rating, releaseYear;
@@ -32,11 +31,7 @@ function MovieCard(props) {
       <Link to={`/movie/${id}`} className="w-full">
         <div className="relative w-full overflow-hidden h-64 sm:h-72 md:h-80 lg:h-96">
           <img
-            src={
-              poster_path
-                ? `https://image.tmdb.org/t/p/w500/${poster_path}`
-                : "https://via.placeholder.com/500x750.png?text=No+Image"
-            }
+            src={`https://image.tmdb.org/t/p/w500/${poster_path}`}
             alt={title}
             className="w-full h-full object-cover"
           />
@@ -75,7 +70,7 @@ function MovieCard(props) {
         </div>
 
         <div className="mt-2 sm:mt-3 text-center bg-blue-500">
-          <BasicModal movieId={id}></BasicModal>
+          <AddToList movieId={id}></AddToList>
         </div>
       </div>
     </div>

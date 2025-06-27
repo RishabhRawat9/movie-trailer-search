@@ -15,3 +15,5 @@
     userId, movieId, [list1, list2](list of lists);
 
 }
+
+# if the userIs not logged in redirecct them to the login page when they try to access the logged up user pages.
